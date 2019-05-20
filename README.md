@@ -66,3 +66,68 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+# Criar o projeto
+
+```sh
+$ npx create-react-app my-app
+$ cd my-app
+$ npm start
+```
+
+# Instalar o Styled-Components
+
+```sh
+$ yarn add styled-components
+```
+
+# Baixando a fonte Montserrat:
+
+link: https://fonts.google.com/?query=montse&selection.family=Montserrat
+
+Clique na fonte e depois em Customized:
+
+- Light 300
+- Regular 400
+- Bold 700
+
+Vá no public > index.html > copiar esse conteúdo:
+
+ <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700&display=swap" rel="stylesheet">
+
+O arquivo ficará assim:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Spotify ReactJS</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+```
+
+## No arquivo do Styles-Components - global.js
+
+```css
+font-family: "Montserrat", sans-serif;
+```
+
+# Instalando a Biblioteca RC-Slider
+
+```bash
+$ yarn add rc-slider
+```
