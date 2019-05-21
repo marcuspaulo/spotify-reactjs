@@ -237,3 +237,412 @@ export default function* rootSaga() {
   yield all([]);
 }
 ```
+
+# Implementando o primeiro Reducers:
+
+## Arquivo index.js (pasta: Ducks)
+
+```js
+import { combineReducers } from "redux";
+
+import playlists from "./playlist";
+
+export default combineReducers({
+  playlists
+});
+```
+
+## Em seguida, crie o Reducer playlist.js
+
+```js
+export const Types = {
+  GET_REQUEST: "playlist/GET_REQUEST",
+  GET_SUCCESS: "playlist/GET_SUCCESS"
+};
+
+const INITIAL_STATE = {
+  data: [],
+  loading: false
+};
+
+export default function playlists(state = INITIAL_STATE, action) {
+  switch (action.type) {
+    case Types.GET_REQUEST:
+      return { ...state, loading: true };
+    case Types.GET_SUCCESS:
+      return { ...state, loading: false, data: action.payload.data };
+    default:
+      return state;
+  }
+}
+
+export const Creators = {
+  getPlaylistRequest: () => ({ type: Types.GET_REQUEST }),
+
+  getPlaylistSuccess: data => ({
+    type: Types.GET_SUCCESS,
+    payload: { data }
+  })
+};
+```
+
+---
+
+# Instalando o JSON-Server
+
+```bash
+$ yarn global add json-server
+```
+
+# Executando o JSON-Server
+
+### O arquivo server.json está dentro da raiz do projeto
+
+### -w: watch - ele atualiza, sem precisar subir novamente o servidor
+
+### -d: Delay na requisição
+
+```bash
+$ json-server server.json -p 3001 -w -d 500
+```
+
+# Instalando o Axios
+
+```bash
+$ yarn add axios
+```
+
+## Em seguida, crie o arquivo API.JS
+
+```js
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "http://localhost:3001"
+});
+
+export default api;
+```
+
+# Próximo passo, será a criação do saga Playlists
+
+```js
+import { call, put } from "redux-saga/effects";
+import api from "../../services/api";
+
+import { Creators as PlaylistActions } from "../ducks/playlists";
+
+export function* getPlaylists() {
+  try {
+    const response = yield call(api.get, "/playlists");
+
+    yield put(PlaylistActions.getPlaylistSuccess(response.data));
+  } catch (err) {
+    console.log(err);
+  }
+}
+```
+
+# Ajustar o arquivo index.js (da pasta sagas)
+
+```js
+import { all, takeLatest } from "redux-saga/effects";
+
+import { Types as PlaylistsTypes } from "../ducks/playlists";
+
+import { getPlaylists } from "./playlists";
+
+export default function* rootSaga() {
+  yield all([takeLatest(PlaylistsTypes.GET_REQUEST, getPlaylists)]);
+}
+```
+
+# Ajustando o Sidebar para chamar o Redux e a API
+
+```js
+import React, { Component } from "react";
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Creators as PlaylistsActions } from "../../store/ducks/playlists";
+
+import { Container, NewPlaylist, Nav } from "./styles";
+
+import AddPlaylistIcon from "../../assets/images/add_playlist.svg";
+
+class Sidebar extends Component {
+  componentDidMount() {
+    this.props.getPlaylistsRequest();
+  }
+
+  render() {
+    return (
+      <Container>
+        <div>
+          <Nav main>
+            <li>
+              <a href="#">Navegar</a>
+            </li>
+            <li>
+              <a href="">Rádio</a>
+            </li>
+          </Nav>
+
+          <Nav>
+            <li>
+              <span>SUA BIBLIOTECA</span>
+            </li>
+
+            <li>
+              <a href="">Seu Daily Mix</a>
+            </li>
+            <li>
+              <a href="">Tocados Recentemente</a>
+            </li>
+            <li>
+              <a href="">Músicas</a>
+            </li>
+            <li>
+              <a href="">Álbuns</a>
+            </li>
+            <li>
+              <a href="">Artistas</a>
+            </li>
+            <li>
+              <a href="">Estações</a>
+            </li>
+            <li>
+              <a href="">Arquivos Locais</a>
+            </li>
+            <li>
+              <a href="">Vídeos</a>
+            </li>
+            <li>
+              <a href="">Podcast</a>
+            </li>
+          </Nav>
+
+          <Nav>
+            <li>
+              <span>PLAYLIST</span>
+            </li>
+            <li>
+              <a href="#">Melhores do Rock</a>
+            </li>
+            <li>
+              <a href="">Melhores da MPB</a>
+            </li>
+          </Nav>
+        </div>
+        <NewPlaylist>
+          <img src={AddPlaylistIcon} alt="Adicionar Playlist" />
+          Nova Playlist
+        </NewPlaylist>
+      </Container>
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  playlists: state.playlists
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(PlaylistsActions, dispatch); // transforma função em uma propriedade do Sidebar
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sidebar);
+```
+
+# Implementação do SideBar com o Redux, chamando a API
+
+```js
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Creators as PlaylistsActions } from "../../store/ducks/playlists";
+
+import { Container, NewPlaylist, Nav } from "./styles";
+
+import AddPlaylistIcon from "../../assets/images/add_playlist.svg";
+
+class Sidebar extends Component {
+  componentDidMount() {
+    this.props.getPlaylistsRequest();
+  }
+
+  render() {
+    return (
+      <Container>
+        <div>
+          <Nav main>
+            <li>
+              <a href="#">Navegar</a>
+            </li>
+            <li>
+              <a href="">Rádio</a>
+            </li>
+          </Nav>
+
+          <Nav>
+            <li>
+              <span>SUA BIBLIOTECA</span>
+            </li>
+
+            <li>
+              <a href="">Seu Daily Mix</a>
+            </li>
+            <li>
+              <a href="">Tocados Recentemente</a>
+            </li>
+            <li>
+              <a href="">Músicas</a>
+            </li>
+            <li>
+              <a href="">Álbuns</a>
+            </li>
+            <li>
+              <a href="">Artistas</a>
+            </li>
+            <li>
+              <a href="">Estações</a>
+            </li>
+            <li>
+              <a href="">Arquivos Locais</a>
+            </li>
+            <li>
+              <a href="">Vídeos</a>
+            </li>
+            <li>
+              <a href="">Podcast</a>
+            </li>
+          </Nav>
+
+          <Nav>
+            <li>
+              <span>PLAYLIST</span>
+            </li>
+
+            {this.props.playlists.data.map(playlist => (
+              <li key={playlist.id}>
+                <Link to={`playlists/${playlist.id}`}>{playlist.title}</Link>
+              </li>
+            ))}
+          </Nav>
+        </div>
+        <NewPlaylist>
+          <img src={AddPlaylistIcon} alt="Adicionar Playlist" />
+          Nova Playlist
+        </NewPlaylist>
+      </Container>
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  playlists: state.playlists
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(PlaylistsActions, dispatch); // transforma função em uma propriedade do Sidebar
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sidebar);
+```
+
+# Instalando a dependência do PropTypes
+
+```bash
+$ yarn add prop-types
+```
+
+# Implementando o PropTypes:
+
+```js
+
+class Sidebar extends Component {
+
+  static propTypes = {
+    getPlaylistsRequest: PropTypes.func.isRequired,
+    playlists: PropTypes.shape({
+      data: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        title: PropTypes.string
+      })),
+    }).isRequired
+  }
+```
+
+# Implementação do SideBar, que vira um componente, além da utilização do Redux
+
+```js
+import React, { Component } from "react";
+
+import PropTypes from "prop-types";
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Creators as PlaylistsActions } from "../../store/ducks/playlists";
+
+import { Container, Title, List, Playlist } from "./styles";
+
+class Browse extends Component {
+  static propTypes = {
+    getPlaylistsRequest: PropTypes.func.isRequired,
+    playlists: PropTypes.shape({
+      data: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.number,
+          title: PropTypes.string,
+          thumbnail: PropTypes.string,
+          description: PropTypes.string
+        })
+      )
+    }).isRequired
+  };
+
+  componentDidMount() {
+    this.props.getPlaylistsRequest();
+  }
+
+  render() {
+    return (
+      <Container>
+        <Title>Navegar</Title>
+
+        <List>
+          {this.props.playlists.data.map(playlist => (
+            <Playlist key={playlist.id} to={`/playlists/${playlist.id}`}>
+              <img src={playlist.thumbnail} alt={playlist.title} />
+              <strong>{playlist.title}</strong>
+              <p>{playlist.description}</p>
+            </Playlist>
+          ))}
+        </List>
+      </Container>
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  playlists: state.playlists
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(PlaylistsActions, dispatch); // transforma função em uma propriedade do Sidebar
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Browse);
+```
+
+# A implementação até o momento:
+
+![Mensagem de Erro](/images/Screen-After-Redux-SideBar.png)

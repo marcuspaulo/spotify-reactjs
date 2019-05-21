@@ -1,70 +1,108 @@
-import React from "react";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Creators as PlaylistsActions } from "../../store/ducks/playlists";
 
 import { Container, NewPlaylist, Nav } from "./styles";
+
 import AddPlaylistIcon from "../../assets/images/add_playlist.svg";
-const Sidebar = () => (
-  <Container>
-    <div>
-      <Nav main>
-        <li>
-          <a href="#">Navegar</a>
-        </li>
-        <li>
-          <a href="">Rádio</a>
-        </li>
-      </Nav>
 
-      <Nav>
-        <li>
-          <span>SUA BIBLIOTECA</span>
-        </li>
+class Sidebar extends Component {
+  static propTypes = {
+    getPlaylistsRequest: PropTypes.func.isRequired,
+    playlists: PropTypes.shape({
+      data: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.number,
+          title: PropTypes.string
+        })
+      )
+    }).isRequired
+  };
 
-        <li>
-          <a href="">Seu Daily Mix</a>
-        </li>
-        <li>
-          <a href="">Tocados Recentemente</a>
-        </li>
-        <li>
-          <a href="">Músicas</a>
-        </li>
-        <li>
-          <a href="">Álbuns</a>
-        </li>
-        <li>
-          <a href="">Artistas</a>
-        </li>
-        <li>
-          <a href="">Estações</a>
-        </li>
-        <li>
-          <a href="">Arquivos Locais</a>
-        </li>
-        <li>
-          <a href="">Vídeos</a>
-        </li>
-        <li>
-          <a href="">Podcast</a>
-        </li>
-      </Nav>
+  componentDidMount() {
+    this.props.getPlaylistsRequest();
+  }
 
-      <Nav>
-        <li>
-          <span>PLAYLIST</span>
-        </li>
-        <li>
-          <a href="#">Melhores do Rock</a>
-        </li>
-        <li>
-          <a href="">Melhores da MPB</a>
-        </li>
-      </Nav>
-    </div>
-    <NewPlaylist>
-      <img src={AddPlaylistIcon} alt="Adicionar Playlist" />
-      Nova Playlist
-    </NewPlaylist>
-  </Container>
-);
+  render() {
+    return (
+      <Container>
+        <div>
+          <Nav main>
+            <li>
+              <Link to="/">Navegar</Link>
+            </li>
+            <li>
+              <a href="">Rádio</a>
+            </li>
+          </Nav>
 
-export default Sidebar;
+          <Nav>
+            <li>
+              <span>SUA BIBLIOTECA</span>
+            </li>
+
+            <li>
+              <a href="">Seu Daily Mix</a>
+            </li>
+            <li>
+              <a href="">Tocados Recentemente</a>
+            </li>
+            <li>
+              <a href="">Músicas</a>
+            </li>
+            <li>
+              <a href="">Álbuns</a>
+            </li>
+            <li>
+              <a href="">Artistas</a>
+            </li>
+            <li>
+              <a href="">Estações</a>
+            </li>
+            <li>
+              <a href="">Arquivos Locais</a>
+            </li>
+            <li>
+              <a href="">Vídeos</a>
+            </li>
+            <li>
+              <a href="">Podcast</a>
+            </li>
+          </Nav>
+
+          <Nav>
+            <li>
+              <span>PLAYLIST</span>
+            </li>
+
+            {this.props.playlists.data.map(playlist => (
+              <li key={playlist.id}>
+                <Link to={`playlists/${playlist.id}`}>{playlist.title}</Link>
+              </li>
+            ))}
+          </Nav>
+        </div>
+        <NewPlaylist>
+          <img src={AddPlaylistIcon} alt="Adicionar Playlist" />
+          Nova Playlist
+        </NewPlaylist>
+      </Container>
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  playlists: state.playlists
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(PlaylistsActions, dispatch); // transforma função em uma propriedade do Sidebar
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sidebar);

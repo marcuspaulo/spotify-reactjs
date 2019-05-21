@@ -1,49 +1,59 @@
-import React from "react";
+import React, { Component } from "react";
+
+import PropTypes from "prop-types";
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Creators as PlaylistsActions } from "../../store/ducks/playlists";
 
 import { Container, Title, List, Playlist } from "./styles";
 
-const Browse = () => (
-  <Container>
-    <Title>Navegar</Title>
+class Browse extends Component {
+  static propTypes = {
+    getPlaylistsRequest: PropTypes.func.isRequired,
+    playlists: PropTypes.shape({
+      data: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.number,
+          title: PropTypes.string,
+          thumbnail: PropTypes.string,
+          description: PropTypes.string
+        })
+      )
+    }).isRequired
+  };
 
-    <List>
-      <Playlist to="/playlists/1">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/en/thumb/1/11/Michaeljacksondangerous.jpg/220px-Michaeljacksondangerous.jpg"
-          alt="Playlist"
-        />
-        <strong>Pop dos Bons</strong>
-        <p>As melhores do POP Mundial</p>
-      </Playlist>
+  componentDidMount() {
+    this.props.getPlaylistsRequest();
+  }
 
-      <Playlist to="/playlists/1">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/en/thumb/1/11/Michaeljacksondangerous.jpg/220px-Michaeljacksondangerous.jpg"
-          alt="Playlist"
-        />
-        <strong>Pop dos Bons</strong>
-        <p>As melhores do POP Mundial</p>
-      </Playlist>
+  render() {
+    return (
+      <Container>
+        <Title>Navegar</Title>
 
-      <Playlist to="/playlists/1">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/en/thumb/1/11/Michaeljacksondangerous.jpg/220px-Michaeljacksondangerous.jpg"
-          alt="Playlist"
-        />
-        <strong>Pop dos Bons</strong>
-        <p>As melhores do POP Mundial</p>
-      </Playlist>
+        <List>
+          {this.props.playlists.data.map(playlist => (
+            <Playlist key={playlist.id} to={`/playlists/${playlist.id}`}>
+              <img src={playlist.thumbnail} alt={playlist.title} />
+              <strong>{playlist.title}</strong>
+              <p>{playlist.description}</p>
+            </Playlist>
+          ))}
+        </List>
+      </Container>
+    );
+  }
+}
 
-      <Playlist to="/playlists/1">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/en/thumb/1/11/Michaeljacksondangerous.jpg/220px-Michaeljacksondangerous.jpg"
-          alt="Playlist"
-        />
-        <strong>Pop dos Bons</strong>
-        <p>As melhores do POP Mundial</p>
-      </Playlist>
-    </List>
-  </Container>
-);
+const mapStateToProps = state => ({
+  playlists: state.playlists
+});
 
-export default Browse;
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(PlaylistsActions, dispatch); // transforma função em uma propriedade do Sidebar
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Browse);
