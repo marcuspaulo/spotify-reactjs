@@ -23,7 +23,7 @@ const Player = () => (
   <Container>
     <Current>
       <img
-        src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/09/12/11/naturo-monkey-selfie.jpg?w968"
+        src="https://upload.wikimedia.org/wikipedia/en/thumb/1/11/Michaeljacksondangerous.jpg/220px-Michaeljacksondangerous.jpg"
         alt="Cover"
       />
 

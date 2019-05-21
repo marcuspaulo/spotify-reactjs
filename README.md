@@ -1,4 +1,12 @@
+# Spotify ReactJS
+
+Disponível para teste: [Aplicação-Teste](https://spotifyplayer-reactjs.herokuapp.com/)
+
+Código-Fonte: [Github](https://github.com/marcuspaulo/spotify-reactjs)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+---
 
 ## Available Scripts
 
@@ -67,6 +75,8 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
 
+---
+
 # Criar o projeto
 
 ```sh
@@ -130,4 +140,100 @@ font-family: "Montserrat", sans-serif;
 
 ```bash
 $ yarn add rc-slider
+```
+
+# Instalando o React-Router-Dom
+
+```bash
+$ yarn add react-router-dom
+```
+
+# Instalando o Reacttron-Reactjs
+
+```bash
+$ yarn add reactotron-react-js reactotron-redux reactotron-redux-saga
+```
+
+# Instalando o Redux React-Redux e Redux-Saga
+
+```bash
+$ yarn add redux react-redux redux-saga
+```
+
+## Inicio da configuração do Redux, Saga
+
+### Criar a seguinte estrutura de diretório
+
+#### src > store
+
+#### > ducks > index.js
+
+#### > sagas > index.js
+
+# Configuração do index.js (Dentro da pasta store)
+
+```js
+import { createStore, compose, applyMiddleware } from "redux";
+import createSagaMiddleware from "redux-saga";
+
+import reducers from "./ducks";
+import sagas from "./sagas";
+
+const middlewares = [];
+
+const sagaMonitor =
+  process.env.NODE_ENV === "development"
+    ? console.tron.createSagaMonitor()
+    : null;
+
+const sagaMiddleware = createSagaMiddleware({ sagaMonitor });
+
+middlewares.push(sagaMiddleware);
+
+const tronMiddleware =
+  process.env.NODE_ENV === "development"
+    ? console.tron.createEnhancer
+    : () => {};
+
+const store = createStore(
+  reducers,
+  compose(
+    applyMiddleware(...middlewares),
+    tronMiddleware()
+  )
+);
+
+sagaMiddleware.run(sagas);
+
+export default store;
+```
+
+# No App.js, adicione os seguintes imports:
+
+## import { Provider } from "react-redux";
+
+## import store from "./store";
+
+### adicione o elemento Provider em volta dos componentes, então, se um dia quiser conseguir a Rota pelo Redux.
+
+---
+
+# No arquivo index.js do Ducks
+
+```js
+import { combineReducers } from "redux";
+
+export default combineReducers({
+  example: () => []
+});
+```
+
+# Implementando o index.js do Saga
+
+```js
+import { all } from "redux-saga/effects";
+
+export default function* rootSaga() {
+  yield all([]);
+}
 ```
