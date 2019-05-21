@@ -645,4 +645,8 @@ export default connect(
 
 # A implementação até o momento:
 
-![Mensagem de Erro](/images/Screen-After-Redux-SideBar.png)
+![SideBar](/images/Screen-After-Redux-SideBar.png)
+
+# Implementação do ErrorBox (Componente de Mensagem de Error)
+
+![Mensagem de Erro](/images/Screen-ErrorBox-LoadingPlaylist.png)
