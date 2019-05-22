@@ -6,6 +6,8 @@ Código-Fonte: [Github](https://github.com/marcuspaulo/spotify-reactjs)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+![Main Screen](/images/Main-Screen.png)
+
 ---
 
 ## Available Scripts
