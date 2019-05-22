@@ -23,8 +23,8 @@ const tronMiddleware =
 const store = createStore(
   reducers,
   compose(
-    applyMiddleware(...middlewares),
-    tronMiddleware()
+    applyMiddleware(...middlewares)
+    //tronMiddleware()
   )
 );
 
