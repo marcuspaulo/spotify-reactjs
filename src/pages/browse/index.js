@@ -34,7 +34,7 @@ class Browse extends Component {
     return (
       <Container>
         <Title>
-          Navegar
+          Navegar Plus
           {this.props.playlists.loading && <Loading />}
         </Title>
 
